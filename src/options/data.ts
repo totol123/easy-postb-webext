@@ -13,6 +13,12 @@ export interface Page {
   url: PageUrl
 }
 
+export const envFMR: Environment = {
+  label: 'FMR',
+  value: 'https://{id}.dev-booking-factory-retain.aws.accor.com',
+  version: 'NGA',
+}
+
 export const environments: Environment[] = [
   {
     label: 'Int3',
@@ -39,13 +45,8 @@ export const environments: Environment[] = [
     value: 'http://localhost:5173',
     version: 'NGA',
   },
+  envFMR,
 ]
-
-export const envFMR: Environment = {
-  label: 'FMR',
-  value: 'https://{id}.dev-booking-factory-retain.aws.accor.com',
-  version: 'NGA',
-}
 
 export const pages: Page[] = [
   {

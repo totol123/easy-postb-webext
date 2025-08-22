@@ -1,27 +1,32 @@
-import type { Environment, Page } from '~/options/data'
+import { type Environment, type Page, environments } from '~/options/data'
+import { env as defaultEnv } from '~/logic/storage'
 
 export function buildPageUrl(page: Page | undefined, env: Environment | undefined, ...params: { param: string, value: string }[]) {
-  if (!page || !env)
+  if (!page)
     return
 
-  let url = page.url[env?.version || 'NGA']
+  const envFallback = env || environments.find(e => e.value === defaultEnv.value)
+
+  let url = page.url[envFallback?.version || 'NGA']
 
   for (const param of params) {
     url = url.replace(`{${param.param}}`, param.value)
   }
 
-  return `${env?.value}${url}`
+  return `${envFallback?.value}${url}`
 }
 
 export function buildEnvUrl(page: Page | undefined, env: Environment | undefined, ...params: { param: string, value: string }[]) {
-  if (!page || !env)
+  if (!page)
     return
 
-  let url = page.url[env?.version || 'NGA']
+  const envFallback = env || environments.find(e => e.value === defaultEnv.value)
+
+  let url = page.url[envFallback?.version || 'NGA']
 
   for (const param of params) {
     url = url.replace(`{${param.param}}`, param.value)
   }
 
-  return `${env?.value}${url}`
+  return `${envFallback?.value}${url}`
 }

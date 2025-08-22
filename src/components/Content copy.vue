@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useUrlParams } from '~/composables/useUrlParams'
 import { buildEnvUrl, buildPageUrl } from '~/logic/buildUrl'
-import { env as defaultEnv, lang as defaultLang, triptych as defaultTriptych } from '~/logic/storage'
+import { lang as defaultLang, triptych as defaultTriptych, storageDemo } from '~/logic/storage'
 import { envFMR, environments, pages } from '~/options/data'
-import type { Lang } from '~/options/lang'
-import { getLangFlag, langFlag, langs } from '~/options/lang'
 
 const props = defineProps<{
   url: string | undefined
@@ -12,6 +10,10 @@ const props = defineProps<{
 
 const { env, triptych, lang, route } = useUrlParams(toRef(props, 'url'))
 const copyTriptychText = ref('Copier le triptych')
+
+function openOptionsPage() {
+  browser.runtime.openOptionsPage()
+}
 
 function copyTriptych() {
   navigator.clipboard.writeText(triptych.value || '')
@@ -41,7 +43,7 @@ const envFMRUrl = ref('POSTB-')
       <h2 class="text-lg font-bold">
         Version
       </h2>
-      <span class="truncate max-w-[3000px]" :class="{ 'text-red-500': env?.version === 'legacy' }">
+      <span class="truncate max-w-[3000px]">
         {{ env?.version }}
       </span>
       <h2 class="text-lg font-bold">
@@ -59,12 +61,9 @@ const envFMRUrl = ref('POSTB-')
       <h2 class="text-lg font-bold">
         Langue
       </h2>
-      <div class="flex gap-2 items-center">
-        <img v-if="lang && langs.includes(lang as Lang)" :src="getLangFlag(lang as Lang)" class="w-6 h-6 rounded-full">
-        <span class="truncate max-w-[3000px]">
-          {{ lang }}
-        </span>
-      </div>
+      <span class="truncate max-w-[3000px]">
+        {{ lang }}
+      </span>
       <h2 class="text-lg font-bold">
         Route
       </h2>
@@ -82,7 +81,7 @@ const envFMRUrl = ref('POSTB-')
       </h1>
       <ul class="grid grid-cols-2 gap-2">
         <li v-for="env in environments" :key="env.label">
-          <a v-if="buildEnvUrl(route, env, ...params)" target="_blank" :href="buildEnvUrl(route, env, ...params)" class="btn w-full text-center">
+          <a :href="buildEnvUrl(route, env, ...params)" class="btn w-full text-center">
             {{ env.label }}
           </a>
         </li>
@@ -95,7 +94,6 @@ const envFMRUrl = ref('POSTB-')
       <li class="flex gap-2">
         <input v-model="envFMRUrl" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
         <a
-          target="_blank"
           :href="buildEnvUrl(route, {
             ...envFMR,
             value: envFMR.value.replace('{id}', envFMRUrl),
