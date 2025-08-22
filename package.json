@@ -1,7 +1,7 @@
 {
   "name": "easy-postb-webext",
   "displayName": "Easy PostB WebExt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "packageManager": "pnpm@9.7.1",
   "description": "Extension pour faciliter la navigation dans POSTB",

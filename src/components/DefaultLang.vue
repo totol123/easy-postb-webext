@@ -17,7 +17,7 @@ defineProps<{
       <a :href="updateUrl" target="_blank" class="btn flex items-center gap-2">
         <img :src="getLangFlag(lang as Lang)" class="w-6 h-6 rounded-full">
 
-        Actualiser la langue
+        Actualiser
       </a>
     </div>
     <select v-model="lang" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">

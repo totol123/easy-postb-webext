@@ -48,6 +48,13 @@ export async function getManifest() {
         },
         description: 'Toggle Easy PostB WebExt',
       },
+      'copy-triptych': {
+        suggested_key: {
+          default: 'Ctrl+Shift+Y',
+          mac: 'Command+Shift+Y',
+        },
+        description: 'Copy the triptych',
+      },
     },
     host_permissions: ['*://*/*'],
     content_scripts: [

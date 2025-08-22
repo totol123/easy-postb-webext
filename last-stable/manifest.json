@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Easy PostB WebExt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Extension pour faciliter la navigation dans POSTB",
   "action": {
     "default_icon": "assets/icon-512.png",
@@ -32,6 +32,13 @@
         "mac": "Command+Shift+E"
       },
       "description": "Toggle Easy PostB WebExt"
+    },
+    "copy-triptych": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Copy the triptych"
     }
   },
   "host_permissions": [

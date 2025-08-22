@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMessage } from 'webext-bridge/content-script'
 import { useUrlParams } from '~/composables/useUrlParams'
 import { buildPageUrl } from '~/logic/buildUrl'
 import { lang as defaultLang, triptych as defaultTriptych } from '~/logic/storage'
@@ -12,6 +13,11 @@ const props = defineProps<{
 
 const { env, triptych, lang, route, fmrId } = useUrlParams(toRef(props, 'url'))
 const copyTriptychText = ref('Copier le triptych')
+
+// Listen for toggle command from background script
+onMessage('copy-triptych', () => {
+  copyTriptych()
+})
 
 function copyTriptych() {
   navigator.clipboard.writeText(triptych.value || '')
@@ -30,124 +36,126 @@ const envFMRUrl = ref('POSTB-')
 </script>
 
 <template>
-  <main class="w-full px-4 py-5 text-left text-gray-700">
-    <div class="grid grid-cols-[1fr_2fr] gap-2 justify-items-start items-center">
-      <h2 class="text-lg font-bold">
-        URL
-      </h2>
-      <span class="truncate max-w-full">
-        {{ props.url }}
-      </span>
-      <h2 class="text-lg font-bold">
-        Version
-      </h2>
-      <div v-if="env?.version" class="flex items-center">
-        <span
-          v-if="env.version === 'NGA'"
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200"
-        >
-          NGA
-        </span>
-        <span
-          v-else-if="env.version === 'legacy'"
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200"
-        >
-
-          Legacy
-        </span>
-        <span v-else class="text-gray-500">{{ env.version }}</span>
-      </div>
-      <h2 class="text-lg font-bold">
-        Env
-      </h2>
-      <span class="truncate max-w-full">
-        {{ env?.label }}<span v-if="fmrId">({{ fmrId }})</span>
-      </span>
-      <h2 class="text-lg font-bold">
-        Triptych
-      </h2>
-      <span class="truncate max-w-full">
-        {{ triptych }}
-      </span>
-      <h2 class="text-lg font-bold">
-        Langue
-      </h2>
-      <div class="flex gap-2 items-center">
-        <img v-if="lang && langs.includes(lang as Lang)" :src="getLangFlag(lang as Lang)" class="w-6 h-6 rounded-full">
+  <main class="w-full px-4 py-5 text-left text-gray-700 overflow-y-auto opacity-80">
+    <div class="h-full max-h-full">
+      <div class="grid grid-cols-[1fr_2fr] gap-2 justify-items-start items-center">
+        <h2 class="text-lg font-bold">
+          URL
+        </h2>
         <span class="truncate max-w-full">
-          {{ lang }}
+          {{ props.url }}
+        </span>
+        <h2 class="text-lg font-bold">
+          Version
+        </h2>
+        <div v-if="env?.version" class="flex items-center">
+          <span
+            v-if="env.version === 'NGA'"
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200"
+          >
+            NGA
+          </span>
+          <span
+            v-else-if="env.version === 'legacy'"
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200"
+          >
+
+            Legacy
+          </span>
+          <span v-else class="text-gray-500">{{ env.version }}</span>
+        </div>
+        <h2 class="text-lg font-bold">
+          Env
+        </h2>
+        <span class="truncate max-w-full">
+          {{ env?.label }}<span v-if="fmrId">({{ fmrId }})</span>
+        </span>
+        <h2 class="text-lg font-bold">
+          Triptych
+        </h2>
+        <span class="truncate max-w-full">
+          {{ triptych }}
+        </span>
+        <h2 class="text-lg font-bold">
+          Langue
+        </h2>
+        <div class="flex gap-2 items-center">
+          <img v-if="lang && langs.includes(lang as Lang)" :src="getLangFlag(lang as Lang)" class="w-6 h-6 rounded-full">
+          <span class="truncate max-w-full">
+            {{ lang }}
+          </span>
+        </div>
+        <h2 class="text-lg font-bold">
+          Route
+        </h2>
+        <span class="truncate max-w-full">
+          {{ route?.label }}
         </span>
       </div>
-      <h2 class="text-lg font-bold">
-        Route
-      </h2>
-      <span class="truncate max-w-full">
-        {{ route?.label }}
-      </span>
-    </div>
-    <button class="btn mt-2 w-full" :disabled="!triptych" @click="copyTriptych">
-      {{ copyTriptychText }}
-    </button>
+      <button class="btn mt-2 w-full" :disabled="!triptych" @click="copyTriptych">
+        {{ copyTriptychText }}
+      </button>
 
-    <div class="mt-4">
-      <h1 class="text-lg font-bold">
-        Environnements
-      </h1>
-      <ul class="grid grid-cols-2 gap-2">
-        <li v-for="env in environments" :key="env.label">
-          <a v-if="buildPageUrl(route, env, ...params)" target="_blank" :href="buildPageUrl(route, env, ...params)" class="btn w-full text-center">
-            {{ env.label }}
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="mt-4">
-      <h1 class="text-lg font-bold">
-        Env FMR
-      </h1>
-      <li class="flex gap-2">
-        <input v-model="envFMRUrl" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
-        <a
-          target="_blank"
-          :href="buildPageUrl(route, {
-            ...envFMR,
-            value: envFMR.value.replace('{id}', envFMRUrl),
-          }, ...params)" class="btn w-full text-center flex items-center justify-center"
-        >
-          Aller à l'env {{ envFMRUrl }}
-        </a>
-      </li>
-    </div>
-
-    <div class="mt-4">
-      <h1 class="text-lg font-bold">
-        Pages
-      </h1>
-      <ul class="grid grid-cols-2 gap-2">
-        <li v-for="page in pages" :key="page.label">
+      <div class="mt-4">
+        <h1 class="text-lg font-bold">
+          Environnements
+        </h1>
+        <ul class="grid grid-cols-2 gap-2">
+          <li v-for="env in environments" :key="env.label">
+            <a v-if="buildPageUrl(route, env, ...params)" target="_blank" :href="buildPageUrl(route, env, ...params)" class="btn w-full text-center">
+              {{ env.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="mt-4">
+        <h1 class="text-lg font-bold">
+          Env FMR
+        </h1>
+        <li class="flex gap-2">
+          <input v-model="envFMRUrl" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
           <a
-            :href="buildPageUrl(page,
-                                env?.label === 'FMR' ? {
-                                  ...envFMR,
-                                  value: envFMR.value.replace('{id}', fmrId || ''),
-                                } : env,
-                                ...params)"
-            class="btn w-full text-center"
+            target="_blank"
+            :href="buildPageUrl(route, {
+              ...envFMR,
+              value: envFMR.value.replace('{id}', envFMRUrl),
+            }, ...params)" class="btn w-full text-center flex items-center justify-center"
           >
-            {{ page.label }}
+            GO
           </a>
         </li>
-      </ul>
-    </div>
+      </div>
 
-    <DefaultTriptych />
-    <DefaultEnv />
-    <DefaultLang
-      :update-url="buildPageUrl(route, env?.label === 'FMR' ? {
-        ...envFMR,
-        value: envFMR.value.replace('{id}', fmrId || ''),
-      } : env, { param: 'lang', value: defaultLang }, ...params)"
-    />
+      <div class="mt-4">
+        <h1 class="text-lg font-bold">
+          Pages
+        </h1>
+        <ul class="grid grid-cols-2 gap-2">
+          <li v-for="page in pages" :key="page.label">
+            <a
+              :href="buildPageUrl(page,
+                                  env?.label === 'FMR' ? {
+                                    ...envFMR,
+                                    value: envFMR.value.replace('{id}', fmrId || ''),
+                                  } : env,
+                                  ...params)"
+              class="btn w-full text-center"
+            >
+              {{ page.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <DefaultTriptych />
+      <DefaultEnv />
+      <DefaultLang
+        :update-url="buildPageUrl(route, env?.label === 'FMR' ? {
+          ...envFMR,
+          value: envFMR.value.replace('{id}', fmrId || ''),
+        } : env, { param: 'lang', value: defaultLang }, ...params)"
+      />
+    </div>
   </main>
 </template>
 
