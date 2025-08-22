@@ -2,7 +2,7 @@
 import { useUrlParams } from '~/composables/useUrlParams'
 import { buildEnvUrl, buildPageUrl } from '~/logic/buildUrl'
 import { lang as defaultLang, triptych as defaultTriptych, storageDemo } from '~/logic/storage'
-import { environments, pages } from '~/options/data'
+import { envFMR, environments, pages } from '~/options/data'
 
 const props = defineProps<{
   url: string | undefined
@@ -27,6 +27,8 @@ const params = computed(() => ([
   { param: 'triptych', value: triptych.value || defaultTriptych.value },
   { param: 'lang', value: lang.value || defaultLang.value },
 ]))
+
+const envFMRUrl = ref('POSTB-')
 </script>
 
 <template>
@@ -86,6 +88,22 @@ const params = computed(() => ([
         </li>
       </ul>
     </div>
+    <div class="mt-4">
+      <h1 class="text-lg font-bold">
+        Env FMR
+      </h1>
+      <li class="flex gap-2">
+        <input v-model="envFMRUrl" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
+        <a
+          :href="buildEnvUrl(route, {
+            ...envFMR,
+            value: envFMR.value.replace('{id}', envFMRUrl),
+          }, ...params)" class="btn w-full text-center flex items-center justify-center"
+        >
+          Aller à l'env {{ envFMRUrl }}
+        </a>
+      </li>
+    </div>
 
     <div class="mt-4">
       <h1 class="text-lg font-bold">
@@ -104,18 +122,10 @@ const params = computed(() => ([
     <DefaultTriptych />
 
     <div class="mt-4">
-      <h1 class="text-lg font-bold">
-        Options
-      </h1>
-      <button class="btn mt-2" @click="openOptionsPage">
-        Plus d'options
-      </button>
-    </div>
-
-    <div class="mt-4">
-      <div class="mt-2">
-        <span class="opacity-50">Storage:</span> {{ storageDemo }}
-      </div>
+      <a
+        class=" text-blue hover:underline"
+        target="_blank" href="https://www.notion.so/87f167e6d3c246c39d75dcc9783ff060?v=ca0a18d2445b459d91e5a06f21e09abd"
+      >Tous les jeux de données</a>
     </div>
   </main>
 </template>

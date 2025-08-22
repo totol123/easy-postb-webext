@@ -35,16 +35,17 @@ export const environments: Environment[] = [
     version: 'legacy',
   },
   {
-    label: 'Env FMR',
-    value: 'https://postb-{id}.dev-booking-factory-retain.aws.accor.com',
-    version: 'NGA',
-  },
-  {
     label: 'Local',
     value: 'http://localhost:5173',
     version: 'NGA',
   },
 ]
+
+export const envFMR: Environment = {
+  label: 'FMR',
+  value: 'https://{id}.dev-booking-factory-retain.aws.accor.com',
+  version: 'NGA',
+}
 
 export const pages: Page[] = [
   {
