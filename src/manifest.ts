@@ -40,6 +40,15 @@ export async function getManifest() {
       'activeTab',
       'sidePanel',
     ],
+    commands: {
+      'toggle-extension': {
+        suggested_key: {
+          default: 'Ctrl+Shift+E',
+          mac: 'Command+Shift+E',
+        },
+        description: 'Toggle Easy PostB WebExt',
+      },
+    },
     host_permissions: ['*://*/*'],
     content_scripts: [
       {

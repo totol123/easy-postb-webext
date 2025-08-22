@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUrlParams } from '~/composables/useUrlParams'
-import { buildEnvUrl, buildPageUrl } from '~/logic/buildUrl'
+import { buildPageUrl } from '~/logic/buildUrl'
 import { lang as defaultLang, triptych as defaultTriptych } from '~/logic/storage'
 import { envFMR, environments, pages } from '~/options/data'
 import type { Lang } from '~/options/lang'
@@ -31,7 +31,7 @@ const envFMRUrl = ref('POSTB-')
 
 <template>
   <main class="w-full px-4 py-5 text-left text-gray-700">
-    <div class="grid grid-cols-[1fr_2fr] gap-2">
+    <div class="grid grid-cols-[1fr_2fr] gap-2 justify-items-start items-center">
       <h2 class="text-lg font-bold">
         URL
       </h2>
@@ -95,7 +95,7 @@ const envFMRUrl = ref('POSTB-')
       </h1>
       <ul class="grid grid-cols-2 gap-2">
         <li v-for="env in environments" :key="env.label">
-          <a v-if="buildEnvUrl(route, env, ...params)" target="_blank" :href="buildEnvUrl(route, env, ...params)" class="btn w-full text-center">
+          <a v-if="buildPageUrl(route, env, ...params)" target="_blank" :href="buildPageUrl(route, env, ...params)" class="btn w-full text-center">
             {{ env.label }}
           </a>
         </li>
@@ -109,7 +109,7 @@ const envFMRUrl = ref('POSTB-')
         <input v-model="envFMRUrl" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
         <a
           target="_blank"
-          :href="buildEnvUrl(route, {
+          :href="buildPageUrl(route, {
             ...envFMR,
             value: envFMR.value.replace('{id}', envFMRUrl),
           }, ...params)" class="btn w-full text-center flex items-center justify-center"
@@ -141,8 +141,13 @@ const envFMRUrl = ref('POSTB-')
     </div>
 
     <DefaultTriptych />
-    <DefaultLang />
     <DefaultEnv />
+    <DefaultLang
+      :update-url="buildPageUrl(route, env?.label === 'FMR' ? {
+        ...envFMR,
+        value: envFMR.value.replace('{id}', fmrId || ''),
+      } : env, { param: 'lang', value: defaultLang }, ...params)"
+    />
   </main>
 </template>
 

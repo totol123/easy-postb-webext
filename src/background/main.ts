@@ -63,3 +63,16 @@ onMessage('get-current-tab', async () => {
     }
   }
 })
+
+// Handle keyboard shortcut commands
+browser.commands.onCommand.addListener(async (command) => {
+  if (command === 'toggle-extension') {
+    // Get the active tab
+    const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true })
+
+    if (activeTab.id) {
+      // Send message to content script to toggle the extension
+      sendMessage('toggle-extension', {}, { context: 'content-script', tabId: activeTab.id })
+    }
+  }
+})

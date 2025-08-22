@@ -7,7 +7,6 @@ import { environments } from '~/options/data'
   <div class="mt-4">
     <h1 class="text-lg font-bold">
       Environnement par défaut
-      {{ env }}
     </h1>
     <select v-model="env" class="border border-gray-400 rounded px-2 py-1 mt-2 w-full">
       <option v-for="env in environments" :key="env.label" :value="env.value">

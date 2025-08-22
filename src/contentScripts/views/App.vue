@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBrowserLocation, useToggle } from '@vueuse/core'
+import { onMessage } from 'webext-bridge/content-script'
 
 const [show, toggle] = useToggle(false)
 
@@ -17,12 +18,20 @@ const isAllowedDomain = computed(() => {
     || hostname === 'localhost'
     || hostname === '127.0.0.1'
 })
+
+// Listen for toggle command from background script
+onMessage('toggle-extension', () => {
+  console.log('toggle-extension', isAllowedDomain.value)
+  if (isAllowedDomain.value) {
+    toggle()
+  }
+})
 </script>
 
 <template>
   <div
     v-if="isAllowedDomain"
-    class="fixed right-0 bottom-0 m-5 z-100 flex items-end font-sans select-none leading-1em"
+    class="fixed right-0 bottom-0 m-5 z-100 flex items-end flex-col gap-4 z-[9999] font-sans select-none leading-1em max-w-[50vw] sm:max-w-[25vw]"
   >
     <div
       v-show="show"
@@ -32,17 +41,16 @@ const isAllowedDomain = computed(() => {
       transition="opacity duration-300"
       :class="show ? 'opacity-100' : 'opacity-0'"
     >
-      <h1 class="text-lg text-center text-bold">
-        Easy PostB WebExt
+      <h1 class="text-lg text-center font-bold">
+        EZ PostB WebExt
       </h1>
       <Content :url="currentUrl?.href" />
     </div>
     <button
-      class="flex rounded-full shadow cursor-pointer border-none text-white p-4 text-lg text-bold"
-      bg="teal-600 hover:teal-700"
+      class="hover:opacity-80 hover:scale-105 transition-all duration-300 flex rounded-full shadow cursor-pointer border-none text-white text-lg text-bold w-24 h-24"
       @click="toggle()"
     >
-      PostB-Tools
+      <img src="/assets/icon-512.png" class="w-full h-full">
     </button>
   </div>
 </template>
