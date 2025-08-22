@@ -13,14 +13,6 @@ function matchesUrlTemplate(currentUrl: string, templateUrl: string): boolean {
   return pattern.test(currentUrl)
 }
 
-function extractWildcardValue(currentUrl: string | undefined, templateUrl: string, placeholder: string): string | undefined {
-  console.log('currentUrl', currentUrl)
-  console.log('templateUrl', templateUrl)
-  console.log('placeholder', placeholder)
-
-  return 'yoyoyo'
-}
-
 export function useUrlParams(url: Ref<string | undefined>) {
   const env = computed(() => {
     if (!url.value)
@@ -79,7 +71,7 @@ export function useUrlParams(url: Ref<string | undefined>) {
 
     const argValue = url.split('/')[position]
 
-    return argValue
+    return argValue.replace('index.', '').replace('.shtml#', '')
   }
 
   const triptych = computed(() => {

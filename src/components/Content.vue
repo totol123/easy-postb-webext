@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUrlParams } from '~/composables/useUrlParams'
-import { storageDemo } from '~/logic/storage'
+import { buildEnvUrl, buildPageUrl } from '~/logic/buildUrl'
+import { lang as defaultLang, triptych as defaultTriptych, storageDemo } from '~/logic/storage'
 import { environments, pages } from '~/options/data'
 
 const props = defineProps<{
@@ -21,6 +22,11 @@ function copyTriptych() {
     copyTriptychText.value = 'Copier le triptych'
   }, 2000)
 }
+
+const params = computed(() => ([
+  { param: 'triptych', value: triptych.value || defaultTriptych.value },
+  { param: 'lang', value: lang.value || defaultLang.value },
+]))
 </script>
 
 <template>
@@ -73,9 +79,9 @@ function copyTriptych() {
         Environnements
       </h1>
       <ul class="grid grid-cols-2 gap-2">
-        <li v-for="environment in environments" :key="environment.label">
-          <a :href="environment.value" class="btn w-full text-center">
-            {{ environment.label }}
+        <li v-for="env in environments" :key="env.label">
+          <a :href="buildEnvUrl(route, env, ...params)" class="btn w-full text-center">
+            {{ env.label }}
           </a>
         </li>
       </ul>
@@ -87,19 +93,15 @@ function copyTriptych() {
       </h1>
       <ul class="grid grid-cols-2 gap-2">
         <li v-for="page in pages" :key="page.label">
-          <a :href="page.label" class="btn w-full text-center">
+          <a :href="buildPageUrl(page, env, ...params)" class="btn w-full text-center">
             {{ page.label }}
           </a>
         </li>
       </ul>
     </div>
 
-    <div class="mt-4">
-      <h1 class="text-lg font-bold">
-        Langue
-      </h1>
-      <LangInput />
-    </div>
+    <DefaultLang />
+    <DefaultTriptych />
 
     <div class="mt-4">
       <h1 class="text-lg font-bold">

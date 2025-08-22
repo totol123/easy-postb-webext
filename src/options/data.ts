@@ -51,7 +51,7 @@ export const pages: Page[] = [
     label: 'Search',
     url: {
       NGA: '/my-stay/{lang}/search',
-      legacy: '/managebookings/index.{lang}.shtml#/search',
+      legacy: '/managebookings/index.{lang}.shtml#/bookings/home',
     },
   },
   {
