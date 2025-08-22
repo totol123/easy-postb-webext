@@ -8,14 +8,19 @@ const props = defineProps<{
 }>()
 
 const { env, triptych, lang, route } = useUrlParams(toRef(props, 'url'))
+const copyTriptychText = ref('Copier le triptych')
 
 function openOptionsPage() {
   browser.runtime.openOptionsPage()
 }
 
-const hasUrlATriptych = computed(() => {
-  return false
-})
+function copyTriptych() {
+  navigator.clipboard.writeText(triptych.value || '')
+  copyTriptychText.value = '✅'
+  setTimeout(() => {
+    copyTriptychText.value = 'Copier le triptych'
+  }, 2000)
+}
 </script>
 
 <template>
@@ -56,11 +61,11 @@ const hasUrlATriptych = computed(() => {
         Route
       </h2>
       <span class="truncate max-w-[3000px]">
-        {{ route }}
+        {{ route?.label }}
       </span>
     </div>
-    <button class="btn mt-2" :disabled="!hasUrlATriptych" @click="openOptionsPage">
-      Copier le triptych
+    <button class="btn mt-2 w-full" :disabled="!triptych" @click="copyTriptych">
+      {{ copyTriptychText }}
     </button>
 
     <div class="mt-4">

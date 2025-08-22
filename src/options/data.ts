@@ -58,7 +58,7 @@ export const pages: Page[] = [
     label: 'Confirmation',
     url: {
       NGA: '/my-stay/{lang}/confirmation/{triptych}',
-      legacy: '/managebookings/index.{lang}.shtml#/confirmation/{triptych}',
+      legacy: '/managebookings/index.{lang}.shtml#/payment/confirmation/{triptych}',
     },
   },
   {
@@ -72,14 +72,14 @@ export const pages: Page[] = [
     label: 'Details',
     url: {
       NGA: '/my-stay/{lang}/details/{triptych}',
-      legacy: 'managebookings/index.{lang}.shtml#/details/{triptych}',
+      legacy: '/managebookings/index.{lang}.shtml#/details/{triptych}',
     },
   },
   {
     label: 'Options',
     url: {
-      NGA: '/options',
-      legacy: 'managebookings/index.{lang}.shtml#/options/{triptych}',
+      NGA: '/my-stay/{lang}/options/{triptych}',
+      legacy: '/managebookings/index.{lang}.shtml#/options/{triptych}',
     },
   },
 ]

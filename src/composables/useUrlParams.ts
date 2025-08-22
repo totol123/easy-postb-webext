@@ -13,6 +13,14 @@ function matchesUrlTemplate(currentUrl: string, templateUrl: string): boolean {
   return pattern.test(currentUrl)
 }
 
+function extractWildcardValue(currentUrl: string | undefined, templateUrl: string, placeholder: string): string | undefined {
+  console.log('currentUrl', currentUrl)
+  console.log('templateUrl', templateUrl)
+  console.log('placeholder', placeholder)
+
+  return 'yoyoyo'
+}
+
 export function useUrlParams(url: Ref<string | undefined>) {
   const env = computed(() => {
     if (!url.value)
@@ -28,6 +36,13 @@ export function useUrlParams(url: Ref<string | undefined>) {
 
       return url.value.includes(env.value)
     })
+  })
+
+  const afterUrl = computed(() => {
+    if (!env.value || !url.value)
+      return
+
+    return url.value.replace(env.value.value, '')
   })
 
   const route = computed(() => {
@@ -48,11 +63,38 @@ export function useUrlParams(url: Ref<string | undefined>) {
       return templateUrl.includes('{')
         ? matchesUrlTemplate(currentUrl, templateUrl)
         : currentUrl.includes(templateUrl)
-    })?.label
+    })
   })
 
-  const triptych = computed(() => '')
-  const lang = computed(() => '')
+  const searchForArg = (template: string, url: string, arg: string) => {
+    if (!template.includes(arg))
+      return
+
+    const findArgPositionInUrl = template.split('/')
+
+    const position = findArgPositionInUrl.findIndex(part => part.includes(arg))
+
+    if (position === -1)
+      return
+
+    const argValue = url.split('/')[position]
+
+    return argValue
+  }
+
+  const triptych = computed(() => {
+    if (!url.value || !env.value || !route.value || !afterUrl.value)
+      return
+
+    return searchForArg(route.value.url[env.value.version], afterUrl.value, 'triptych')
+  })
+
+  const lang = computed(() => {
+    if (!url.value || !env.value || !route.value || !afterUrl.value)
+      return
+
+    return searchForArg(route.value.url[env.value.version], afterUrl.value, 'lang')
+  })
 
   return { env, triptych, lang, route }
 }
