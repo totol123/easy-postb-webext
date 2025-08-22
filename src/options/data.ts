@@ -16,32 +16,32 @@ export interface Page {
 export const environments: Environment[] = [
   {
     label: 'Int3',
-    value: 'https://int3-all.accor.com/a/fr.html',
+    value: 'https://int3-all.accor.com',
     version: 'NGA',
   },
   {
     label: 'Rec1',
-    value: 'https://rec1-secure.accor.com/',
+    value: 'https://rec1-secure.accor.com',
     version: 'legacy',
   },
   {
     label: 'Rec2',
-    value: 'https://rec2-secure.accor.com/',
+    value: 'https://rec2-secure.accor.com',
     version: 'legacy',
   },
   {
     label: 'Rec3',
-    value: 'https://rec3-secure.accor.com/',
+    value: 'https://rec3-secure.accor.com',
     version: 'legacy',
   },
   {
     label: 'Env FMR',
-    value: 'https://postb-{id}.dev-booking-factory-retain.aws.accor.com/',
+    value: 'https://postb-{id}.dev-booking-factory-retain.aws.accor.com',
     version: 'NGA',
   },
   {
     label: 'Local',
-    value: 'http://localhost:5173/',
+    value: 'http://localhost:5173',
     version: 'NGA',
   },
 ]
@@ -50,29 +50,36 @@ export const pages: Page[] = [
   {
     label: 'Search',
     url: {
-      NGA: '/search',
-      legacy: '/search',
+      NGA: '/my-stay/{lang}/search',
+      legacy: '/managebookings/index.{lang}.shtml#/search',
     },
   },
   {
     label: 'Confirmation',
     url: {
-      NGA: '/confirmation',
-      legacy: '/confirmation',
+      NGA: '/my-stay/{lang}/confirmation/{triptych}',
+      legacy: '/managebookings/index.{lang}.shtml#/confirmation/{triptych}',
     },
   },
   {
     label: 'Cancel',
     url: {
-      NGA: '/cancel',
-      legacy: '/cancel',
+      NGA: '/my-stay/{lang}/cancel/{triptych}',
+      legacy: '/managebookings/index.{lang}.shtml#/cancellation/{triptych}',
     },
   },
   {
     label: 'Details',
     url: {
-      NGA: '/details/{triptych}',
-      legacy: '/details/{triptych}',
+      NGA: '/my-stay/{lang}/details/{triptych}',
+      legacy: 'managebookings/index.{lang}.shtml#/details/{triptych}',
+    },
+  },
+  {
+    label: 'Options',
+    url: {
+      NGA: '/options',
+      legacy: 'managebookings/index.{lang}.shtml#/options/{triptych}',
     },
   },
 ]

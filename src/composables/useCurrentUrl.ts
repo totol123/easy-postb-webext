@@ -1,9 +1,60 @@
 export function useCurrentUrl() {
-  const currentUrl = ref()
+  const currentUrl = ref<string | undefined>(undefined)
+
+  const getCurrentUrl = async () => {
+    try {
+      // Check if we're in a content script context
+      if (typeof window !== 'undefined' && window.location && window.location.href.startsWith('http')) {
+        // In content script, we can get the current URL directly
+        return window.location.href
+      }
+      else {
+        // In popup/sidepanel/options context, use browser API
+        if (typeof browser !== 'undefined' && browser.tabs) {
+          const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+          return tabs[0]?.url
+        }
+      }
+    }
+    catch (error) {
+      console.error('Failed to get current URL:', error)
+      return undefined
+    }
+  }
+
+  const updateCurrentUrl = async () => {
+    currentUrl.value = await getCurrentUrl()
+  }
 
   onMounted(async () => {
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true })
-    currentUrl.value = tabs[0].url
+    // Initial URL fetch
+    await updateCurrentUrl()
+
+    // Listen for tab changes (only in extension contexts with browser API)
+    if (typeof browser !== 'undefined' && browser.tabs) {
+      // Listen for tab activation changes
+      browser.tabs.onActivated.addListener(updateCurrentUrl)
+
+      // Listen for tab updates (URL changes within the same tab)
+      browser.tabs.onUpdated.addListener((tabId, changeInfo, _tab) => {
+        if (changeInfo.url || changeInfo.status === 'complete') {
+          updateCurrentUrl()
+        }
+      })
+    }
+  })
+
+  onUnmounted(() => {
+    // Clean up listeners when component is unmounted
+    if (typeof browser !== 'undefined' && browser.tabs) {
+      try {
+        browser.tabs.onActivated.removeListener(updateCurrentUrl)
+        browser.tabs.onUpdated.removeListener(updateCurrentUrl)
+      }
+      catch {
+        // Listeners might not exist, ignore errors
+      }
+    }
   })
 
   return currentUrl
