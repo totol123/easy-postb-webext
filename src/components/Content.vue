@@ -35,7 +35,7 @@ const envFMRUrl = ref('POSTB-')
       <h2 class="text-lg font-bold">
         URL
       </h2>
-      <span class="truncate max-w-[3000px]">
+      <span class="truncate max-w-full">
         {{ props.url }}
       </span>
       <h2 class="text-lg font-bold">
@@ -60,13 +60,13 @@ const envFMRUrl = ref('POSTB-')
       <h2 class="text-lg font-bold">
         Env
       </h2>
-      <span class="truncate max-w-[3000px]">
+      <span class="truncate max-w-full">
         {{ env?.label }}<span v-if="fmrId">({{ fmrId }})</span>
       </span>
       <h2 class="text-lg font-bold">
         Triptych
       </h2>
-      <span class="truncate max-w-[3000px]">
+      <span class="truncate max-w-full">
         {{ triptych }}
       </span>
       <h2 class="text-lg font-bold">
@@ -74,14 +74,14 @@ const envFMRUrl = ref('POSTB-')
       </h2>
       <div class="flex gap-2 items-center">
         <img v-if="lang && langs.includes(lang as Lang)" :src="getLangFlag(lang as Lang)" class="w-6 h-6 rounded-full">
-        <span class="truncate max-w-[3000px]">
+        <span class="truncate max-w-full">
           {{ lang }}
         </span>
       </div>
       <h2 class="text-lg font-bold">
         Route
       </h2>
-      <span class="truncate max-w-[3000px]">
+      <span class="truncate max-w-full">
         {{ route?.label }}
       </span>
     </div>

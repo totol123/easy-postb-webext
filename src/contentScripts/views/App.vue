@@ -31,7 +31,7 @@ onMessage('toggle-extension', () => {
 <template>
   <div
     v-if="isAllowedDomain"
-    class="fixed right-0 bottom-0 m-5 z-100 flex items-end flex-col gap-4 z-[9999] font-sans select-none leading-1em max-w-[50vw] sm:max-w-[25vw]"
+    class="fixed right-0 bottom-0 m-5 z-100 flex items-end flex-col gap-4 z-[9999]! font-sans select-none leading-1em max-w-[50vw] md:max-w-[25vw]"
   >
     <div
       v-show="show"
