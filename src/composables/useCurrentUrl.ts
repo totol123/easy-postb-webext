@@ -27,15 +27,11 @@ export function useCurrentUrl() {
   }
 
   onMounted(async () => {
-    // Initial URL fetch
     await updateCurrentUrl()
 
-    // Listen for tab changes (only in extension contexts with browser API)
     if (typeof browser !== 'undefined' && browser.tabs) {
-      // Listen for tab activation changes
       browser.tabs.onActivated.addListener(updateCurrentUrl)
 
-      // Listen for tab updates (URL changes within the same tab)
       browser.tabs.onUpdated.addListener((tabId, changeInfo, _tab) => {
         if (changeInfo.url || changeInfo.status === 'complete') {
           updateCurrentUrl()
@@ -45,14 +41,12 @@ export function useCurrentUrl() {
   })
 
   onUnmounted(() => {
-    // Clean up listeners when component is unmounted
     if (typeof browser !== 'undefined' && browser.tabs) {
       try {
         browser.tabs.onActivated.removeListener(updateCurrentUrl)
         browser.tabs.onUpdated.removeListener(updateCurrentUrl)
       }
       catch {
-        // Listeners might not exist, ignore errors
       }
     }
   })
