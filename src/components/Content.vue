@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useUrlParams } from '~/composables/useUrlParams'
 import { buildEnvUrl, buildPageUrl } from '~/logic/buildUrl'
-import { env as defaultEnv, lang as defaultLang, triptych as defaultTriptych } from '~/logic/storage'
+import { lang as defaultLang, triptych as defaultTriptych } from '~/logic/storage'
 import { envFMR, environments, pages } from '~/options/data'
 import type { Lang } from '~/options/lang'
-import { getLangFlag, langFlag, langs } from '~/options/lang'
+import { getLangFlag, langs } from '~/options/lang'
 
 const props = defineProps<{
   url: string | undefined
 }>()
 
-const { env, triptych, lang, route } = useUrlParams(toRef(props, 'url'))
+const { env, triptych, lang, route, fmrId } = useUrlParams(toRef(props, 'url'))
 const copyTriptychText = ref('Copier le triptych')
 
 function copyTriptych() {
@@ -41,14 +41,27 @@ const envFMRUrl = ref('POSTB-')
       <h2 class="text-lg font-bold">
         Version
       </h2>
-      <span class="truncate max-w-[3000px]" :class="{ 'text-red-500': env?.version === 'legacy' }">
-        {{ env?.version }}
-      </span>
+      <div v-if="env?.version" class="flex items-center">
+        <span
+          v-if="env.version === 'NGA'"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200"
+        >
+          NGA
+        </span>
+        <span
+          v-else-if="env.version === 'legacy'"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200"
+        >
+
+          Legacy
+        </span>
+        <span v-else class="text-gray-500">{{ env.version }}</span>
+      </div>
       <h2 class="text-lg font-bold">
         Env
       </h2>
       <span class="truncate max-w-[3000px]">
-        {{ env?.label }}
+        {{ env?.label }}<span v-if="fmrId">({{ fmrId }})</span>
       </span>
       <h2 class="text-lg font-bold">
         Triptych
@@ -112,23 +125,24 @@ const envFMRUrl = ref('POSTB-')
       </h1>
       <ul class="grid grid-cols-2 gap-2">
         <li v-for="page in pages" :key="page.label">
-          <a :href="buildPageUrl(page, env, ...params)" class="btn w-full text-center">
+          <a
+            :href="buildPageUrl(page,
+                                {
+                                  ...envFMR,
+                                  value: envFMR.value.replace('{id}', fmrId || ''),
+                                },
+                                ...params)"
+            class="btn w-full text-center"
+          >
             {{ page.label }}
           </a>
         </li>
       </ul>
     </div>
 
-    <DefaultLang />
     <DefaultTriptych />
+    <DefaultLang />
     <DefaultEnv />
-
-    <div class="mt-4">
-      <a
-        class=" text-blue hover:underline"
-        target="_blank" href="https://www.notion.so/87f167e6d3c246c39d75dcc9783ff060?v=ca0a18d2445b459d91e5a06f21e09abd"
-      >Tous les jeux de données</a>
-    </div>
   </main>
 </template>
 
