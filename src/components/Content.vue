@@ -127,10 +127,10 @@ const envFMRUrl = ref('POSTB-')
         <li v-for="page in pages" :key="page.label">
           <a
             :href="buildPageUrl(page,
-                                {
+                                env?.label === 'FMR' ? {
                                   ...envFMR,
                                   value: envFMR.value.replace('{id}', fmrId || ''),
-                                },
+                                } : env,
                                 ...params)"
             class="btn w-full text-center"
           >
